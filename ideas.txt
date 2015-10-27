@@ -1,0 +1,31 @@
+Steps:
+1. Create Map.
+-Have set locations
+-Make sure all locations connect
+-don't make a linear map.
+       -specialized spot has a name
+       -a normal spot with 1 door is a room
+       -a normal spot with 2 doors is a Hall
+       -a normal spot with 3 doors is a room
+       -a normal spot with 4 doors is a room
+       -crew quarters. locker room. airlock. sick bay. cafeteria.
+       -cockpit. engine room. control room. lab. officer cabin. 
+       -Gravity Well. Hold. Lounge.
+2. Create Stats
+Human: N/A. Just inventory
+Alien: 8 hits
+crit does 2 damage.
+Can stun alien.
+
+3. Create items
+   -decide where they go
+   -decide what they do
+4. Give abilities in rooms
+   -lockers, comms, switches, etc
+   
+
+
+
+
+
+Alien AI.
