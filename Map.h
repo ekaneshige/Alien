@@ -9,6 +9,7 @@ class Map {
   Map(int, int);
   void BuildRegMap();
   void BuildRandMap(int, int);
+  void CreateMaze(int, int);
  private:
   pair<string, int> **ShipMap;
   pair<string, int> **FirstFloor;
