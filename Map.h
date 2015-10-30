@@ -8,12 +8,28 @@ class Map {
   Map();
   Map(int, int);
   void BuildRegMap();
-  void BuildRandMap(int, int);
-  void CreateMaze(int, int);
+  void BuildRandMap();
+  void CreateMaze();
+  void printmaze();
+  int newFloor(int, int);
+  int oppositeFloorType(int);
+  bool DFS_check();
+  bool DFS_to_target(int,int,int,int);
+  void add_new_opportunities(int, int);
+ 
  private:
+  void printfloor(int);
+  void printwalls(int);
+  void printceiling();
+  void printcode();
   pair<string, int> **ShipMap;
   pair<string, int> **FirstFloor;
   pair<string, int> **SecondFloor;
+  int xbound;
+  int ybound;
+  stack<pair<int, int> > backtrack; //stack of how to get back FOR ALIEN
+  stack<pair<int, int> > history; //stack of all places I've been FOR ALIEN
+  stack<pair<int, int> > new_opportunities; //FOR ALIEN
 };
 
 
