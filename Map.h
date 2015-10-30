@@ -15,9 +15,11 @@ class Map {
   int oppositeFloorType(int);
   bool DFS_check();
   bool DFS_to_target(int,int,int,int);
-  void add_new_opportunities(int, int);
+  void add_new_opportunities(int, int, string[]);
+  bool check_history(int x, int y);
  
  private:
+  
   void printfloor(int);
   void printwalls(int);
   void printceiling();
@@ -28,8 +30,9 @@ class Map {
   int xbound;
   int ybound;
   stack<pair<int, int> > backtrack; //stack of how to get back FOR ALIEN
-  stack<pair<int, int> > history; //stack of all places I've been FOR ALIEN
+  vector <pair<int, int> > history; //stack of all places I've been FOR ALIEN
   stack<pair<int, int> > new_opportunities; //FOR ALIEN
+  //string *chosen_seq; //for the DFS
 };
 
 

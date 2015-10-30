@@ -49,7 +49,7 @@ void Map::BuildRandMap() { //unofficial
   //CreateMaze();
 }
 
-void Map::CreateMaze() { //also do 2nd floor.
+void Map::CreateMaze() { //also do 2nd floor. //FIRST FLOOR WORKS!!!!
   //Maze generation
   /*     _       _             _      _
      0: |_|  1:  _| 2: |_| 3: |_  4: | |
@@ -90,17 +90,17 @@ void Map::CreateMaze() { //also do 2nd floor.
     cout << "y: " << random_y_num << endl;
     cout << FirstFloor[random_x_num][random_y_num].second << endl;
     if (FirstFloor[random_x_num][random_y_num].second == 0) {
-      cout << "in while loop" << endl; ////////////////////////////
+      //cout << "in while loop" << endl; ////////////////////////////
       bool broken = false;
       while (!broken) {
 	int temp1 = 0; //holds the original floor type before it changes
 	int temp2 = 0; //holds the original floor value of adjacent tile
 	int newtype = (rand() % 4 + 1);
-	cout << "new type: " << newtype << endl;
+	//cout << "new type: " << newtype << endl;
 	switch (newtype) { 
 	case 1: 
 	  {
-	    if ((random_x_num - 1) >= 0) { 
+	    if ((random_x_num - 1) >= 0) { //bond with left tile
 	      broken = true;
 	      temp1 = FirstFloor[random_x_num][random_y_num].second;
 	      FirstFloor[random_x_num][random_y_num].second = 
@@ -112,7 +112,7 @@ void Map::CreateMaze() { //also do 2nd floor.
 	  }
 	case 2:
 	  {
-	    if ((random_y_num - 1) >= 0)  { 
+	    if ((random_y_num - 1) >= 0)  {  //bond with up tile
 	      //broken = true;
 	      //FirstFloor[random_x_num][random_y_num].second = newtype;
 	      broken = true;
@@ -127,7 +127,7 @@ void Map::CreateMaze() { //also do 2nd floor.
 	  }
 	case 3:
 	  {
-	    if ((random_x_num + 1) < xbound)  { 
+	    if ((random_x_num + 1) < xbound)  { //bond with right tile
 	      //broken = true;
 	      //FirstFloor[random_x_num][random_y_num].second = newtype;
 	      broken = true;
@@ -141,7 +141,7 @@ void Map::CreateMaze() { //also do 2nd floor.
 	  }
 	case 4: 
 	  {
-	    if ((random_y_num + 1) < ybound)  { 
+	    if ((random_y_num + 1) < ybound)  { //bond with down tile
 	      //broken = true;
 	      //FirstFloor[random_x_num][random_y_num].second = newtype;
 	      broken = true;
@@ -226,7 +226,7 @@ void Map::printfloor(int num) {
   }
 }
 
-void Map::printmaze() {
+void Map::printmaze() { //WORKS
   printceiling();
   for (int j = 0; j < ybound; j++) {
     //cout << "|";
@@ -248,7 +248,7 @@ void Map::printcode() {
   for (int j = 0; j < ybound; j++) {
     //cout << "|";
     for (int i = 0; i < xbound; i++) {
-      cout << ShipMap[i][j].second;
+      cout << "[" << ShipMap[i][j].second << "]";
     }
     cout << endl;
  }
@@ -265,7 +265,7 @@ int Map::oppositeFloorType (int num) {
   return result;
 }
 
-int Map::newFloor (int current, int destroyedwall) {
+int Map::newFloor (int current, int destroyedwall) { //redefine a tile
   bool left = false;
   bool up = false;
   bool right = false;
@@ -323,6 +323,7 @@ bool Map::DFS_check() {
       if (!DFS_to_target(x, y, target_x, target_y)) return false;
     }
   }
+  return true; //successful
 }
 
 bool Map::DFS_to_target (int startx, int starty, int endx, int endy) {
@@ -354,9 +355,10 @@ bool Map::DFS_to_target (int startx, int starty, int endx, int endy) {
     } 
     if (acceptable) chosen_seq_size++;
   }
-
+  //see if the current tile is the same as the target tile
   while (curr != end) {
     //true means that wall is gone for this particular tile
+    //now see which move we can make now
     switch (tile) {
     case 1: {left = true; break;}
     case 2: {up = true; break;}
@@ -375,72 +377,126 @@ bool Map::DFS_to_target (int startx, int starty, int endx, int endy) {
     case 1234: {left = true; up = true; right = true; down = true; break;}
     }
     bool approved_move = false;
+    //see if there are approved moves. if so, take it.
     for (int j = 0; !approved_move && (j < chosen_seq_size); j++) {
       if (chosen_seq[j] == "left") {
 	if (left) {//add to history. move. add new possibilities.
 	  backtrack.push(make_pair(curr.first, curr.second)); //add curr space
-	  history.push(make_pair(curr.first, curr.second));
-	  curr.first--;
-	  //add new possibilities function of this tile space.
+	  history.push_back(make_pair(curr.first, curr.second));
+ 	  curr.first--;
+	  approved_move = true;
+	  add_new_opportunities(curr.first, curr.second, chosen_seq);
+ 	  //add new possibilities function of this tile space.
 	  
-	}
-      }
-      else if (chosen_seq[j] == "up") {
-
-      }
-      else if (chosen_seq[j] == "down") {
-
-      }
-      else if (chosen_seq[j] == "right") {
-
-      }
+ 	}
+       }
+       else if (chosen_seq[j] == "up") {
+	 if (up) {
+	   backtrack.push(make_pair(curr.first, curr.second)); //add curr space
+	   history.push_back(make_pair(curr.first, curr.second));
+	   curr.second--;
+	   //instead, we should add the location you go to in history. 
+	   //NOT FROM where you came from.
+	   approved_move = true;
+	   add_new_opportunities(curr.first, curr.second, chosen_seq);
+	 }
+       }
+       else if (chosen_seq[j] == "down") {
+	 if (down) {
+	   backtrack.push(make_pair(curr.first, curr.second)); //add curr space
+	   history.push_back(make_pair(curr.first, curr.second));
+	   curr.second++;
+	   approved_move = true;
+	   add_new_opportunities(curr.first, curr.second, chosen_seq);
+	 }
+       }
+       else if (chosen_seq[j] == "right") {
+	 if (right) {
+	   backtrack.push(make_pair(curr.first, curr.second)); //add curr space
+	   history.push_back(make_pair(curr.first, curr.second));
+	   curr.first++;
+	   approved_move = true;
+	   add_new_opportunities(curr.first, curr.second, chosen_seq);
+	 }
+       }
     }
-    
+    if (approved_move == false) {
+      //go back to the last opportunity and start again from there.
+      //read from backtrack. use the opportunity stack to find next objective.
+      //then add new opportunities from there!!!
+    } else {
+      
+    }
   
 
 
-    /*
-    if (tile == 1 || tile == 12 || tile == 13 || tile == 14
-	|| tile == 123 || tile == 124 || tile == 134) {
+     /*
+     if (tile == 1 || tile == 12 || tile == 13 || tile == 14
+ 	|| tile == 123 || tile == 124 || tile == 134) {
       //search through history
-      for (int i = 0; i < vector.size(); i++) {
-	//if (curr == history[i]) 
-	//don't go back unless have to.
-	//stages: advance. and then going backwards until finding a new path
-      }
-      //
-      } */
+       for (int i = 0; i < vector.size(); i++) {
+ 	//if (curr == history[i]) 
+ 	//don't go back unless have to.
+ 	//stages: advance. and then going backwards until finding a new path
+       }
+       //
+       } */
   }
-    return true;
+  return true;
 }
 
-void Map::add_new_opportunities(int x, int y) {
-  bool left = false;
-  bool down = false;
-  bool up = false;
-  bool right = false;
-  switch (FirstFloor[x][y].second) {
-  case 1: {left = true; break;}
-  case 2: {up = true; break;}
-  case 3: {right = true; break;}
-  case 4: {down = true; break;}
-  case 12: {left = true; up = true; break;}
-  case 13: {left = true; right = true; break;}
-  case 14: {left = true; down = true; break;}
-  case 23: {up = true;  right = true; break;}
-  case 24: {up = true; down = true; break;}
-  case 34: {right = true; down = true; break;}
-  case 123: {left = true; up = true; right = true; break;}
-  case 124: {left = true; up = true; down = true; break;}
-  case 134: {left = true; right = true; down = true; break;}
-  case 234: {up = true; right = true; down = true; break;}
-  case 1234: {left = true; up = true; right = true; down = true; break;}
+void Map::add_new_opportunities(int x, int y, string chosen_seq[]) {
+   bool left = false;
+   bool down = false;
+   bool up = false;
+   bool right = false;
+   switch (FirstFloor[x][y].second) {
+   case 1: {left = true; break;}
+   case 2: {up = true; break;}
+   case 3: {right = true; break;}
+   case 4: {down = true; break;}
+   case 12: {left = true; up = true; break;}
+   case 13: {left = true; right = true; break;}
+   case 14: {left = true; down = true; break;}
+   case 23: {up = true;  right = true; break;}
+   case 24: {up = true; down = true; break;}
+   case 34: {right = true; down = true; break;}
+   case 123: {left = true; up = true; right = true; break;}
+   case 124: {left = true; up = true; down = true; break;}
+   case 134: {left = true; right = true; down = true; break;}
+   case 234: {up = true; right = true; down = true; break;}
+   case 1234: {left = true; up = true; right = true; down = true; break;}
+   }
+   //we have to do the for loop decrementing  instead of incrementing BECAUSE
+   //in order to put items in the stack in the RIGHT ORDER from the
+   //perspective of a specific tile, we want the NEXT IN THE SEQ PATTERN
+   //to go if we have to go back to that tile. Therefore, we have to read
+   //the seq pattern in reverse so our most "liked" opportunity is on top!!
+
+   //should make sure chosen_seq is always active. meaning size = 4.
+   for (int i = chosen_seq->size() - 1; i >= 0; i--) {
+     if (left && chosen_seq[i] == "left") {
+       if (!check_history(x, y)) new_opportunities.push(make_pair(x--, y));
+     }
+     if (down && chosen_seq[i] == "down") {
+       if (!check_history(x, y)) new_opportunities.push(make_pair(x, y++));
+     }
+     if (up && chosen_seq[i] == "up") {
+       if (!check_history(x, y)) new_opportunities.push(make_pair(x, y--));
+     }
+     if (right && chosen_seq[i] == "right") {
+       if (!check_history(x, y)) new_opportunities.push(make_pair(x++, y));
+     }
+   }
+   //dont add to new_opportunities from places you have been and was just from
+   //when using this function, add the priority direction to this. don't 
+   //just have every new opportunity be from left->down->up->right
+ }
+
+ bool Map::check_history(int x, int y) {
+  for (int i = 0; i < history.size(); i++) {
+    if (history[i].first == x && history[i].second == y) return true; 
   }
-  if (left) new_opportunities.push(make_pair(x--, y));
-  if (down) new_opportunities.push(make_pair(x, y++));
-  if (up) new_opportunities.push(make_pair(x, y--));
-  if (right) new_opportunities.push(make_pair(x++, y));
-  //dont add to new_opportunities from places you have been and was just from
-  //when using this function, add the priority direction to this. don't 
-  //just have every new opportunity be from left->down->up->right
+  return false;
+
 }
